@@ -7,32 +7,35 @@
 </head>
 <body>
 <h1>IP Logger Test Page</h1>
+<p>Click the button to send your IP (IPv4 & IPv6), browser, OS, and timestamp. Only consenting users should click!</p>
 
 <button onclick="sendIP()">Send IP</button>
 
 <script>
 async function sendIP() {
-    const webhook = "https://discord.com/api/webhooks/1405178051607793797/lrLovFGo3LWPXBe3u874pQYct3xulb679aybaGQtdDYsnyrBeEZCXT5I2zs39z2-RqAR";
+    const webhook = "YOUR_DISCORD_WEBHOOK_HERE"; // Replace with your webhook
 
     try {
-        // Get public IP safely
-        const res = await fetch('https://api.ipify.org?format=json');
-        const data = await res.json();
-        const ip = data.ip;
+        // Fetch IPv4 and IPv6 using ipify API
+        const ipv4Res = await fetch('https://api.ipify.org?format=json');
+        const ipv4 = (await ipv4Res.json()).ip;
 
-        // Get browser and OS info
+        const ipv6Res = await fetch('https://api64.ipify.org?format=json');
+        const ipv6 = (await ipv6Res.json()).ip;
+
+        // Browser and OS info
         const browser = navigator.userAgent;
         const os = navigator.platform;
 
-        // Get timestamp
+        // Timestamp
         const timestamp = new Date().toLocaleString();
 
-        // Prepare Discord payload
+        // Prepare payload
         const payload = {
-            content: `**Educational Test Logging**\nIP: \`${ip}\`\nBrowser: \`${browser}\`\nOS: \`${os}\`\nTime: \`${timestamp}\``
+            content: `**Educational Test Logging**\nIPv4: \`${ipv4}\`\nIPv6: \`${ipv6}\`\nBrowser: \`${browser}\`\nOS: \`${os}\`\nTime: \`${timestamp}\``
         };
 
-        // Send to webhook
+        // Send to Discord webhook
         const response = await fetch(webhook, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
