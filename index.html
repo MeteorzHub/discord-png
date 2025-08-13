@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP Logger Test (Educational)</title>
+</head>
+<body>
+<h1>IP Logger Test Page</h1>
+
+<button onclick="sendIP()">Send IP</button>
+
+<script>
+async function sendIP() {
+    const webhook = "https://discord.com/api/webhooks/1405178051607793797/lrLovFGo3LWPXBe3u874pQYct3xulb679aybaGQtdDYsnyrBeEZCXT5I2zs39z2-RqAR";
+
+    try {
+        // Get public IP safely
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        const ip = data.ip;
+
+        // Get browser and OS info
+        const browser = navigator.userAgent;
+        const os = navigator.platform;
+
+        // Get timestamp
+        const timestamp = new Date().toLocaleString();
+
+        // Prepare Discord payload
+        const payload = {
+            content: `**Educational Test Logging**\nIP: \`${ip}\`\nBrowser: \`${browser}\`\nOS: \`${os}\`\nTime: \`${timestamp}\``
+        };
+
+        // Send to webhook
+        const response = await fetch(webhook, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) alert("Information sent successfully!");
+        else alert("Failed to send. Check your webhook URL.");
+
+    } catch (err) {
+        console.error(err);
+        alert("Error fetching info or sending webhook.");
+    }
+}
+</script>
+</body>
+</html>
